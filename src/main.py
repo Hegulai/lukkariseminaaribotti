@@ -8,7 +8,13 @@ def start(update, context):
     return
 
 def logMessage(update,context):
-    print(update.message.text)
+    user = update.message.from_user
+    text = update.message.text + " | " + user.first_name
+    if (user.last_name):
+        text += " " + user.last_name
+    if (user.username):
+        text += " @" + user.username
+    print(text)
     return
 
 def main():
@@ -16,6 +22,9 @@ def main():
 
     updater = Updater(token=token)
     dp = updater.dispatcher
+    # ignore group messages
+    dp.add_handler(MessageHandler(Filters.chat_type.groups, lambda a, b : None))
+
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(Filters.all, logMessage))
 
