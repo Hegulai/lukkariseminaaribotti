@@ -19,8 +19,9 @@ class commandShell(cmd.Cmd):
     def do_status(self, arg):
         'Printtaa status info'
         arvattava = self.tarkastaja.saa_arvattava()
-        print('Arvattava laulu: ')
-        print(arvattava)
+        correctResponses = self.arvausStore.getAll()
+        print('Arvattava laulu: ' + arvattava)
+        print('Oikeita vastauksia tullut: ' + str(len(correctResponses)))
 
     def do_changeguess(self, arg):
         'Aseta uusi arvaus ja poista tiedoista edellisen arvauksen vastaukset'
