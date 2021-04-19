@@ -1,8 +1,9 @@
 # encoding: utf-8
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from arvaus import arvauksen_tarkastaja
-import arvausStore
 import os
+from arvaus import arvauksen_tarkastaja
+import commandShell
+import arvausStore
 
 TARKASTAJA = None
 
@@ -29,7 +30,7 @@ def arvaa(update, context):
 
     timestamp = update.message.date
     if TARKASTAJA.on_oikea_arvaus(arvaus):
-        arvausStore.add(timestamp, user.username )
+        arvausStore.add(timestamp.isoformat(), user.username, arvaus)
 
     viesti_arvaajalle = "Arvaus lähetetty: " + arvaus
     context.bot.send_message(chat_id=update.effective_chat.id, text=viesti_arvaajalle)
@@ -52,10 +53,11 @@ def main():
     dp.add_handler(MessageHandler(Filters.all, logMessage))
     TARKASTAJA = arvauksen_tarkastaja()
     TARKASTAJA.aseta_arvattava('Hyvät Ystävät')
-
+    arvausStore.init()
     updater.start_polling()
     print("start")
-    updater.idle()
+    shell = commandShell.commandShell(TARKASTAJA, arvausStore)
+    shell.cmdloop()
 
 
 if __name__ == '__main__':
