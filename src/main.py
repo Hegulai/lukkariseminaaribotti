@@ -8,7 +8,13 @@ import arvausStore
 TARKASTAJA = None
 
 def start(update, context):
-    text = "ok"
+    text = """Lähetä arvaus kappaleesta komennolla /arvaa.
+
+Esimerkiksi:
+/arvaa Hyvät ystävät
+
+Pienillä/isoilla kirjaimilla ei ole merkitystä. Arvaa ainoastaan kappaleen nimeä, ei esimerkiksi tekijää.
+"""
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
     return
 
@@ -35,8 +41,8 @@ def arvaa(update, context):
     viesti_arvaajalle = "Arvaus lähetetty: " + arvaus
     context.bot.send_message(chat_id=update.effective_chat.id, text=viesti_arvaajalle)
 
-    message_to_log = "@" + user.username + ": " + arvaus
-    print(message_to_log)
+    # message_to_log = "@" + user.username + ": " + arvaus
+    # print(message_to_log)
     return
 
 def main():
@@ -50,12 +56,12 @@ def main():
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("arvaa", arvaa))
-    dp.add_handler(MessageHandler(Filters.all, logMessage))
+    # dp.add_handler(MessageHandler(Filters.all, logMessage))
+
     TARKASTAJA = arvauksen_tarkastaja()
     TARKASTAJA.aseta_arvattava('Hyvät Ystävät')
     arvausStore.init()
     updater.start_polling()
-    print("start")
     shell = commandShell.commandShell(TARKASTAJA, arvausStore, updater.bot)
     shell.cmdloop()
 

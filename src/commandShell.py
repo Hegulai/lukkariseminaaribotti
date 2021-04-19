@@ -5,6 +5,7 @@ class commandShell(cmd.Cmd):
 
     def __init__(self, tarkastaja, arvausStore, bot):
         super().__init__()
+        self.intro = "Botti käynnistetty. help -komento auttaa"
         self.tarkastaja = tarkastaja
         self.arvausStore = arvausStore
         self.completekey = 'tab'
@@ -33,7 +34,7 @@ class commandShell(cmd.Cmd):
         items = self.arvausStore.getWinners()
         i = 1
         for item in items:
-            text = "Hei, vastauksesi on oikein ja olet odottamassa sijalla " + str(i) + ". TODO"
+            text = "Hei, vastauksesi on oikein ja olet odottamassa sijalla " + str(i) + ". Ole valppaana, oikein vastanneille soitetaan Telegram-puhelu vastausjärjestyksessä, ja ensimmäinen vastannut pääsee lähetykseen."
             self.bot.send_message(
                 chat_id=item[1], text=text)
             i += 1
