@@ -30,5 +30,10 @@ class commandShell(cmd.Cmd):
         'Lähetä template viesti viidelle parhaalle'
         pass
 
+    def do_first_5(self, arg):
+        'Printtaa viisi ensimmäistä'
+        items = self.arvausStore.getWinners()
+        print(items)
+
     def emptyline(self):
         pass

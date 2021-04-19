@@ -19,8 +19,11 @@ def add(timestamp, username, answer):
     connection.close()
 
 def clear():
-    # TODO
-    pass
+    connection = getConnection()
+    cur = connection.cursor()
+    cur.execute('DELETE FROM answers')
+    connection.commit()
+    connection.close()
 
 def getAll():
     connection = getConnection()
@@ -31,5 +34,10 @@ def getAll():
     return result
 
 def getWinners():
-    # TODO
-    pass
+    connection = getConnection()
+    cur = connection.cursor()
+    cur.execute('SELECT DISTINCT username FROM answers ORDER BY timestamp DESC LIMIT 5')
+    result = cur.fetchall()
+    connection.close()
+    return result
+
