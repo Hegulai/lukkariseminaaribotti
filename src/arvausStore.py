@@ -7,14 +7,14 @@ def getConnection():
 def init():
     connection = getConnection()
     cur = connection.cursor()
-    cur.execute('CREATE TABLE answers (timestamp text, username text, answer text)')
+    cur.execute('CREATE TABLE answers (timestamp text, username text, answer text, userid integer)')
     connection.commit()
     connection.close()
 
-def add(timestamp, username, answer):
+def add(timestamp, username, answer, userid):
     connection = getConnection()
     cur = connection.cursor()
-    cur.execute('INSERT INTO answers VALUES (?, ?, ?)', (timestamp, username, answer))
+    cur.execute('INSERT INTO answers VALUES (?, ?, ?, ?)', (timestamp, username, answer, userid))
     connection.commit()
     connection.close()
 
@@ -36,8 +36,7 @@ def getAll():
 def getWinners():
     connection = getConnection()
     cur = connection.cursor()
-    cur.execute('SELECT DISTINCT username FROM answers ORDER BY timestamp DESC LIMIT 5')
+    cur.execute('SELECT DISTINCT username, userid FROM answers ORDER BY timestamp ASC LIMIT 5')
     result = cur.fetchall()
     connection.close()
     return result
-

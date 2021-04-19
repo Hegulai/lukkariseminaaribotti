@@ -30,7 +30,7 @@ def arvaa(update, context):
 
     timestamp = update.message.date
     if TARKASTAJA.on_oikea_arvaus(arvaus):
-        arvausStore.add(timestamp.isoformat(), user.username, arvaus)
+        arvausStore.add(timestamp.isoformat(), user.username, arvaus, user.id)
 
     viesti_arvaajalle = "Arvaus lähetetty: " + arvaus
     context.bot.send_message(chat_id=update.effective_chat.id, text=viesti_arvaajalle)
@@ -56,7 +56,7 @@ def main():
     arvausStore.init()
     updater.start_polling()
     print("start")
-    shell = commandShell.commandShell(TARKASTAJA, arvausStore)
+    shell = commandShell.commandShell(TARKASTAJA, arvausStore, updater.bot)
     shell.cmdloop()
 
 

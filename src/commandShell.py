@@ -3,11 +3,12 @@ import arvausStore
 
 class commandShell(cmd.Cmd):
 
-    def __init__(self, tarkastaja, arvausStore):
+    def __init__(self, tarkastaja, arvausStore, bot):
         super().__init__()
         self.tarkastaja = tarkastaja
         self.arvausStore = arvausStore
         self.completekey = 'tab'
+        self.bot = bot
 
     def do_list(self, arg):
         'Listaa kaikki saapuneet oikeat arvaukset'
@@ -28,7 +29,13 @@ class commandShell(cmd.Cmd):
 
     def do_sendresponse(self, arg):
         'Lähetä template viesti viidelle parhaalle'
-        pass
+        items = self.arvausStore.getWinners()
+        i = 1
+        for item in items:
+            text = "Hei, vastauksesi on oikein ja olet odottamassa sijalla " + str(i) + ". TODO"
+            self.bot.send_message(
+                chat_id=item[1], text=text)
+            i += 1
 
     def do_first_5(self, arg):
         'Printtaa viisi ensimmäistä'
