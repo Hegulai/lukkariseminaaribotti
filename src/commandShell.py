@@ -20,8 +20,10 @@ class commandShell(cmd.Cmd):
     def do_status(self, arg):
         'Printtaa status info'
         arvattava = self.tarkastaja.saa_arvattava()
-        correctResponses = self.arvausStore.getAll()
+        allResponses = self.arvausStore.getAll()
+        correctResponses = self.arvausStore.getWinners()
         print('Arvattava laulu: ' + arvattava)
+        print('Vastauksia tullut: ' + str(len(allResponses)))
         print('Oikeita vastauksia tullut: ' + str(len(correctResponses)))
 
     def do_changeguess(self, arg):
@@ -31,17 +33,29 @@ class commandShell(cmd.Cmd):
 
     def do_sendresponse(self, arg):
         'Lähetä template viesti viidelle parhaalle'
-        items = self.arvausStore.getWinners()
+        winners = self.arvausStore.getWinners()
         i = 1
-        for item in items:
+        for winner in winners:
             text = "Hei, vastauksesi on oikein ja olet odottamassa sijalla " + str(i) + ". Ole valppaana, oikein vastanneille soitetaan Telegram-puhelu vastausjärjestyksessä, ja ensimmäinen puheluun vastannut pääsee lähetykseen."
             self.bot.send_message(
-                chat_id=item[1], text=text)
+                chat_id=winner[1], text=text)
             i += 1
+
+        others = self.arvausStore.getOthers()
+        for other in others:
+            text = "Hei, viisi nopeiten oikein vastannutta on nyt valittu ja et valitettavasti ole heidän joukossaan tällä kertaa."
+            self.bot.send_message(
+                chat_id=other[1], text=text)
+
 
     def do_first_5(self, arg):
         'Printtaa viisi ensimmäistä'
         items = self.arvausStore.getWinners()
+        print(items)
+
+    def do_list_others(self, arg):
+        'Printtaa muut paitsi viisi ensimmäistä'
+        items = self.arvausStore.getOthers()
         print(items)
 
     def emptyline(self):

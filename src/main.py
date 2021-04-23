@@ -8,10 +8,10 @@ import arvausStore
 TARKASTAJA = None
 
 def start(update, context):
-    text = """Lähetä arvaus kappaleesta komennolla /arvaa.
+    text = """Arvataksesi kappaletta lähetä viesti jossa lukee ainoastaan kappaleen nimi
 
 Esimerkiksi:
-/arvaa Hyvät ystävät
+    Hyvät ystävät
 
 Pienillä/isoilla kirjaimilla ei ole merkitystä. Arvaa ainoastaan kappaleen nimeä, ei esimerkiksi tekijää.
 """
@@ -31,12 +31,12 @@ def logMessage(update,context):
 def arvaa(update, context):
     global TARKASTAJA
     user = update.message.from_user
-    teksti = update.message.text.split(" ")
-    arvaus = " ".join(teksti[1:])
+
+    arvaus = update.message.text
 
     timestamp = update.message.date
-    if TARKASTAJA.on_oikea_arvaus(arvaus):
-        arvausStore.add(timestamp.isoformat(), user.username, arvaus, user.id)
+    correct = TARKASTAJA.on_oikea_arvaus(arvaus)
+    arvausStore.add(timestamp.isoformat(), user.username, arvaus, user.id, correct)
 
     viesti_arvaajalle = "Arvaus lähetetty: " + arvaus
     context.bot.send_message(chat_id=update.effective_chat.id, text=viesti_arvaajalle)
@@ -55,8 +55,8 @@ def main():
     dp.add_handler(MessageHandler(Filters.chat_type.groups, lambda a, b : None))
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("arvaa", arvaa))
-    # dp.add_handler(MessageHandler(Filters.all, logMessage))
+    # dp.add_handler(CommandHandler("arvaa", arvaa))
+    dp.add_handler(MessageHandler(Filters.all, arvaa))
 
     TARKASTAJA = arvauksen_tarkastaja()
     TARKASTAJA.aseta_arvattava('Hyvät Ystävät')
